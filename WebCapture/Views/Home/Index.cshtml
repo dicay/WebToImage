@@ -1,0 +1,47 @@
+﻿@{
+    ViewBag.Title = "C# Web to Image";
+}
+
+
+<h2>C# WebCapture Image</h2>
+@using (Html.BeginForm())
+{
+    <input type="text" maxlength="255" id="txtUrl" name="txtUrl" value="blog.dicay.net" />
+    <input type="button" value="Capture" id="btnSubmit"/>
+    <div id="loading" style="display: none"> 
+        <img src="~/Images/ajax-loader.gif" /></div>
+    <div id="result"></div>
+}
+
+<script src="~/Scripts/jquery-1.11.3.min.js"></script>
+
+
+<script type="text/javascript">
+    $(document).ready(function () {
+        $(document).ajaxStart(function () {
+            $("#loading").show();
+        }).ajaxStop(function () {
+            $("#loading").hide();
+        });
+    });
+    $("#btnSubmit").click(function() {
+        $.ajax({
+            url: '@Url.Action("Index", "Home")',
+            type: "POST",
+            dataType: "json",
+            data: { txtUrl: $("#txtUrl").val() },
+            success: function (data) {
+                if (data.code === "00") {
+                    $("#result").html("<img src='"+data.imgsrc+"' width=320/>");
+                } else {
+                    $("#result").html(data.msg);
+                }
+            },
+            error: function (e) {
+                //display error
+                $("#result").html("An error has occured!" + e.message);
+            }
+        });
+
+    });
+</script>
